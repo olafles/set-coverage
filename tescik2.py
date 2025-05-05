@@ -1,5 +1,8 @@
 import os
 from collections import defaultdict
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
 
 def load_scp(path: str) -> tuple:
     """Load set cover problem instance from file."""
@@ -92,3 +95,37 @@ else:
     print(f"Wybrane kolumny greedy: {selected_columns}")
     print_column_assignments(selected_columns, covers)
 
+
+def visualize_cover_matrix(covers: list[set], selected_columns: list[int], m: int, n: int) -> None:
+    """
+    Rysuje macierz pokrycia elementów przez kolumny (zaznacza również kolumny wybrane przez greedy).
+    
+    Parameters:
+        covers: lista zbiorów elementów pokrywanych przez każdą kolumnę.
+        selected_columns: lista wybranych przez algorytm kolumn (1-indeksowanych).
+        m: liczba elementów
+        n: liczba kolumn
+    """
+    # Inicjalizacja macierzy pokrycia
+    matrix = np.zeros((m, n), dtype=int)
+
+    for col_idx, elements in enumerate(covers):
+        for elem in elements:
+            matrix[elem][col_idx] = 1
+
+    plt.figure(figsize=(15, 10))
+    ax = sns.heatmap(matrix, cmap="Greens", cbar=False, linewidths=0.5, linecolor='lightgrey')
+
+    # Dodaj czerwone ramki wokół kolumn wybranych przez greedy
+    for col in selected_columns:
+        ax.add_patch(plt.Rectangle((col - 1, 0), 1, m, fill=False, edgecolor='red', lw=2))
+
+    plt.xlabel("Kolumny (podzbiory)")
+    plt.ylabel("Elementy")
+    plt.title("Macierz pokrycia elementów przez kolumny")
+    plt.xticks(ticks=np.arange(n) + 0.5, labels=[f"K{i+1}" for i in range(n)], rotation=90)
+    plt.yticks(ticks=np.arange(m) + 0.5, labels=[f"E{i}" for i in range(m)], rotation=0)
+    plt.tight_layout()
+    plt.show()
+
+visualize_cover_matrix(covers, selected_columns, m, n)
