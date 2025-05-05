@@ -1,0 +1,82 @@
+def load_scp_file(path):
+    with open(path, 'r') as f:
+        lines = f.read().splitlines()
+        if not lines:
+            raise ValueError("Plik jest pusty lub nie został poprawnie wczytany.")
+
+    print(f"Załadowano {len(lines)} linii z pliku.")
+
+    n_elements, n_columns = map(int, lines[0].split())
+    flat_costs = []
+    line_idx = 1
+
+    # Wczytaj koszty
+    while len(flat_costs) < n_columns:
+        flat_costs.extend(map(int, lines[line_idx].split()))
+        line_idx += 1
+
+    costs = {i: cost for i, cost in enumerate(flat_costs)}
+
+    # Wczytaj pokrycia
+    element_to_columns = {}
+    elem_id = 1
+    while elem_id <= n_elements:
+        count = int(lines[line_idx])
+        line_idx += 1
+        cols = []
+        while len(cols) < count:
+            cols.extend(map(int, lines[line_idx].split()))
+            line_idx += 1
+        element_to_columns[elem_id] = [c - 1 for c in cols]  # kolumny od 0
+        elem_id += 1
+
+    # Zbuduj kolumny -> elementy
+    from collections import defaultdict
+    column_to_elements = defaultdict(set)
+    for elem, cols in element_to_columns.items():
+        for col in cols:
+            column_to_elements[col].add(elem)
+
+    return n_elements, n_columns, costs, column_to_elements
+
+
+def greedy_set_cover(n_elements, costs, column_to_elements):
+    uncovered = set(range(1, n_elements + 1))
+    selected_columns = []
+
+    while uncovered:
+        best_col = None
+        best_score = 0
+
+        for col, elems in column_to_elements.items():
+            gain = len(uncovered & elems)
+            if gain > 0:
+                score = gain / costs[col]
+                if score > best_score:
+                    best_score = score
+                    best_col = col
+
+        if best_col is None:
+            raise Exception("Brak możliwości pokrycia wszystkich elementów")
+
+        selected_columns.append(best_col)
+        uncovered -= column_to_elements[best_col]
+
+    return selected_columns
+
+def print_column_assignments(selected_columns, covers):
+    for col in selected_columns:
+        # Kolumny w 'selected_columns' są numerowane od 1, więc musimy odwołać się do 'col-1'
+        col_elements = covers[col - 1]  # Kolumna 1 to index 0 w liście covers
+        print(f"Kolumna {col+1} pokrywa elementy: {sorted(col_elements)}")
+
+# ==== URUCHOMIENIE ====
+
+filename = "scp_toy.txt"
+n_elements, n_columns, costs, column_to_elements = load_scp_file(filename)
+selected = greedy_set_cover(n_elements, costs, column_to_elements)
+
+print("Wybrane kolumny:", selected)
+print("Koszt całkowity:", sum(costs[c] for c in selected))
+
+print_column_assignments(selected_columns, covers)
