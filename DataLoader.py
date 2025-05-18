@@ -114,4 +114,3 @@ if __name__ == "__main__":
     dl.fetch_data()
     for i in range(dl.get_n()):
         print(f"Element {i} is covered by subsets: {dl.get_element_covers()[i]}")
-    a = 1 + None
