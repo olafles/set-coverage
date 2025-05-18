@@ -6,11 +6,10 @@ import os
 class DataLoader:
     _file_path = ""
     _n: int
-    _m: int 
+    _m: int
     _costs: list[int]
     _element_covers: list[list[int]]
     _subset_covers: list[list[int]]
-    
 
     def __init__(self, file_path: str) -> None:
         """Initialize with path to instance file
@@ -29,8 +28,10 @@ class DataLoader:
                 raise ValueError("File is empty or unreadable.")
 
         m, n = map(int, lines[0].split())
-        self._n = m +1
-        self._m = n +1
+        if m is None or m == 0 or n is None or n == 0:
+            raise Exception(f"Invalid instance: {n=}, {m=}")
+        self._n = m + 1
+        self._m = n + 1
 
         costs = []
         idx = 1
@@ -52,7 +53,7 @@ class DataLoader:
             while len(entries) < count:
                 idx += 1
                 entries += list(map(int, lines[idx].split()))
-            #element_covers.append([x for x in entries])  # 1-based
+            # element_covers.append([x for x in entries])  # 1-based
             element_covers[current_element].extend(entries)
             current_element += 1
             idx += 1
@@ -64,7 +65,6 @@ class DataLoader:
                 subset_covers[subset - 1].add(elem_index + 1)  # switch back to 1-based
 
         self._subset_covers = [sorted(list(s)) for s in subset_covers]
-
 
     def get_n(self) -> int:
         """Get number of elements that need to be covered
@@ -81,7 +81,7 @@ class DataLoader:
             int: Number of subsets in instance
         """
         return self._m
-    
+
     def get_element_covers(self) -> list[list[int]]:
         """Return list of subsets covering each element
 
@@ -98,7 +98,7 @@ class DataLoader:
         """
 
         return self._subset_covers
-    
+
     def get_costs(self) -> list[int]:
         """Return cost of each subset
 
@@ -110,7 +110,14 @@ class DataLoader:
 
 if __name__ == "__main__":
     print("Testing DataLoader...")
-    dl = DataLoader("scp_toy.txt")
+    dl = DataLoader("scp41.txt")
     dl.fetch_data()
-    for i in range(dl.get_n()):
-        print(f"Element {i} is covered by subsets: {dl.get_element_covers()[i]}")
+    test = f"""
+    {dl._file_path=}
+    {dl.get_n()=}
+    {dl.get_m()=}
+    {dl.get_costs()=}
+    {dl.get_element_covers()=}
+    {dl.get_subset_covers()=}
+"""
+    print(test)
