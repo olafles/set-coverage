@@ -1,4 +1,4 @@
-"""Class for data import from file"""
+"""Class for data import from file (Singleton)"""
 
 import os
 
@@ -21,103 +21,83 @@ class DataLoader:
         self._file_path = os.path.join(base_dir, "instances", file_path)
 
     def fetch_data(self) -> None:
-        """Load data from file to class attributes using updated parser"""
+        """Load data from file to class attributes with zero-based indexing"""
         with open(self._file_path, "r") as f:
-            lines = f.read().splitlines()
+            lines = [line.strip() for line in f if line.strip()]
             if not lines:
                 raise ValueError("File is empty or unreadable.")
 
-        m, n = map(int, lines[0].split())
-        if m is None or m == 0 or n is None or n == 0:
-            raise Exception(f"Invalid instance: {n=}, {m=}")
-        self._n = m + 1
-        self._m = n + 1
+        n_elements, n_subsets = map(int, lines[0].split())
+        if n_elements <= 0 or n_subsets <= 0:
+            raise ValueError(
+                f"Invalid instance: n_elements={n_elements}, n_subsets={n_subsets}"
+            )
+        self._n = n_elements
+        self._m = n_subsets
 
-        costs = []
+        costs: list[int] = []
         idx = 1
-        while len(costs) < n:
+        while len(costs) < self._m and idx < len(lines):
             costs.extend(map(int, lines[idx].split()))
             idx += 1
-        self._costs = costs
+        if len(costs) < self._m:
+            raise ValueError(
+                f"Not enough cost entries: expected {self._m}, got {len(costs)}"
+            )
+        self._costs = costs[: self._m]
 
-        element_covers = [[] for _ in range(self._n)]
-        current_element = 1
-        while idx < len(lines):
-            line = lines[idx].strip()
-            if not line:
-                idx += 1
-                continue
-            parts = list(map(int, line.split()))
+        element_covers: list[list[int]] = []
+        for _ in range(self._n):
+            if idx >= len(lines):
+                raise ValueError("Unexpected end of file when reading element covers.")
+            parts = list(map(int, lines[idx].split()))
+            idx += 1
             count = parts[0]
             entries = parts[1:]
-            while len(entries) < count:
+            while len(entries) < count and idx < len(lines):
+                entries.extend(map(int, lines[idx].split()))
                 idx += 1
-                entries += list(map(int, lines[idx].split()))
-            # element_covers.append([x for x in entries])  # 1-based
-            element_covers[current_element].extend(entries)
-            current_element += 1
-            idx += 1
+            if len(entries) < count:
+                raise ValueError(
+                    f"Not enough subset indices for element: expected {count}, got {len(entries)}"
+                )
+            element_covers.append([e - 1 for e in entries])
+
         self._element_covers = element_covers
 
-        subset_covers = [set() for _ in range(n)]
-        for elem_index, subsets in enumerate(element_covers):
-            for subset in subsets:
-                subset_covers[subset - 1].add(elem_index + 1)  # switch back to 1-based
-
-        self._subset_covers = [sorted(list(s)) for s in subset_covers]
+        subset_covers: list[list[int]] = [[] for _ in range(self._m)]
+        for elem_idx, subsets in enumerate(self._element_covers):
+            for s in subsets:
+                subset_covers[s].append(elem_idx)
+        self._subset_covers = [sorted(lst) for lst in subset_covers]
 
     def get_n(self) -> int:
-        """Get number of elements that need to be covered
-
-        Returns:
-            int: Number of elements that need to be covered
-        """
+        """Get number of elements that need to be covered"""
         return self._n
 
     def get_m(self) -> int:
-        """Get number of subsets
-
-        Returns:
-            int: Number of subsets in instance
-        """
+        """Get number of subsets"""
         return self._m
 
     def get_element_covers(self) -> list[list[int]]:
-        """Return list of subsets covering each element
-
-        Returns:
-            List[List[int]]: List of subsets covering each element
-        """
+        """Return list of subsets covering each element"""
         return self._element_covers
 
     def get_subset_covers(self) -> list[list[int]]:
-        """Return list of elements covered by each subset
-
-        Returns:
-            List[List[int]]: List of elements covered by each subset
-        """
-
+        """Return list of elements covered by each subset"""
         return self._subset_covers
 
     def get_costs(self) -> list[int]:
-        """Return cost of each subset
-
-        Returns:
-            List[int]: List of costs per subset
-        """
+        """Return cost of each subset"""
         return self._costs
 
 
 if __name__ == "__main__":
-    print("Testing DataLoader...")
-    dl = DataLoader("scp41.txt")
+    # Testing
+    dl = DataLoader("scp_toy.txt")
     dl.fetch_data()
-    test = f"""
-    {dl._file_path=}
-    {dl.get_n()=}
-    {dl.get_m()=}
-    {dl.get_costs()=}
-    {dl.get_element_covers()=}
-    {dl.get_subset_covers()=}
-"""
-    print(test)
+    print(f"Loaded {dl.get_n()} elements and {dl.get_m()} subsets.")
+    print(f"Costs: {dl.get_costs()}")
+    print(f"Costs len: {len(dl.get_costs())}")
+    print(f"Element covers sample: {dl.get_element_covers()}")
+    print(f"Subset covers sample: {dl.get_subset_covers()}")
