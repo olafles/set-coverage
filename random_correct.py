@@ -16,14 +16,11 @@ class RandomSolutionGenerator:
             [all_subsets.pop(all_subsets.index(random.choice(all_subsets)))]
         )
         while not solution._is_correct:
-            # sorted_all = sorted(all_subsets)
-            # print(sorted_all)
-            # print(sorted(solution.subsets))
             solution.subsets.append(
                 all_subsets.pop(all_subsets.index(random.choice(all_subsets)))
             )
             self.validator.is_correct(solution)
-
+        self.validator.complex_eval(solution)
         return solution
 
 

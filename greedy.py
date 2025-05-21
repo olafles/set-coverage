@@ -47,9 +47,7 @@ class GreedySolutionGenerator:
             available_subsets.remove(best_subset)
 
         solution = Solution(solution_subsets)
-        self.validator.is_correct(solution)
-        self.validator.sum_costs(solution)
-        self.validator.calculate_fitness(solution)
+        self.validator.complex_eval(solution)
         return solution
 
     def generate_population(self) -> List[Solution]:
@@ -57,7 +55,6 @@ class GreedySolutionGenerator:
         solutions = []
         start_time = time.time()
         for start_subset in range(self.validator._m):
-            print(start_subset)
             try:
                 solution = self._generate_greedy_solution(start_subset)
                 if solution.is_correct():

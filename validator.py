@@ -77,7 +77,18 @@ class Validator:
         Returns:
             float: Fitness indicator
         """
-        fitness = len(solution.subsets) / self.sum_costs(solution)
+        if not self.is_correct(solution):
+            return float("inf")
+
+        cost_weight = 0.5
+        subsets_weight = 0.5
+
+        normalized_cost = self.sum_costs(solution) / sum(self._costs)
+        normalized_subsets = len(solution.subsets) / self._m
+
+        fitness = (cost_weight * normalized_cost) + (
+            subsets_weight * normalized_subsets
+        )
         solution._fitness = fitness
         return fitness
 
@@ -88,8 +99,58 @@ class Validator:
         Args:
             solution (Solution): Solution to evaluate
         """
-        # TODO Combine all above
         self.is_correct(solution)
         self.sum_costs(solution)
         self.calculate_fitness(solution)
         pass
+
+    def remove_redundant_subsets(
+        self, solution: Solution, reverse: bool = False, continuous: bool = False
+    ) -> bool:
+        """Remove redundant subsets from the solution while maintaining full coverage.
+
+        Args:
+            solution (Solution): Solution to optimize
+            reverse (bool): If True, checks subsets from back to front. Default False.
+            continuous (bool): If True, checks all subsets and removes all redundant ones. Default False.
+
+        Returns:
+            bool: True if any redundant subset was found and removed, False otherwise
+        """
+        if not solution.subsets:
+            return False
+
+        # Get current covered elements
+        current_covered = set(self.calculate_covered_elements(solution))
+        removed_any = False
+        subset_indices = range(len(solution.subsets))
+
+        # Reverse the order if needed
+        if reverse:
+            subset_indices = reversed(subset_indices)
+
+        # Create a copy of indices to avoid modifying while iterating
+        indices_to_check = list(subset_indices)
+
+        for i in indices_to_check:
+            # Skip if this subset was already removed in continuous mode
+            if i >= len(solution.subsets):
+                continue
+
+            # Calculate coverage without this subset
+            temp_subsets = solution.subsets[:i] + solution.subsets[i + 1 :]
+            temp_solution = Solution(temp_subsets)
+            temp_covered = set(self.calculate_covered_elements(temp_solution))
+
+            # If coverage is still complete, remove the subset
+            if temp_covered == current_covered:
+                solution.subsets.pop(i)
+                removed_any = True
+
+                # If not in continuous mode, return after first removal
+                if not continuous:
+                    break
+
+        if removed_any:
+            self.complex_eval(solution)  # Update solution metrics
+        return removed_any
