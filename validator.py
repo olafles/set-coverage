@@ -83,4 +83,7 @@ class Validator:
 
     def complex_eval(self, solution: Solution) -> None:
         # TODO Combine all above
+        self.is_correct(solution)
+        self.sum_costs(solution)
+        self.calculate_fitness(solution)
         pass
