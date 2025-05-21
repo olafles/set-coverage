@@ -9,7 +9,7 @@ class GreedySolutionGenerator:
         self.validator = validator
 
     def _generate_greedy_solution(self, start_subset: int = None) -> Solution:
-        """Generuje rozwiązanie, wybierając podzbiory o najwyższym stosunku nowych elementów do kosztu."""
+        """Generates a greedy solution, selecting subsets with the best ratio of new elements to cost."""
         n = self.validator._n
         costs = self.validator._costs
         covers = self.validator._covers
@@ -19,13 +19,11 @@ class GreedySolutionGenerator:
         available_subsets = set(range(self.validator._m))
         solution_subsets = []
 
-        # Startuj od konkretnego subsetu (jeśli podano)
         if start_subset is not None and start_subset in available_subsets:
             solution_subsets.append(start_subset)
             covered.update(covers[start_subset])
             available_subsets.remove(start_subset)
 
-        # Główna pętla zachłanna
         while covered < all_elements:
             best_subset = None
             best_value = -float("inf")
@@ -34,16 +32,15 @@ class GreedySolutionGenerator:
                 new_elements = set(covers[subset]) - covered
                 new_count = len(new_elements)
                 if new_count == 0:
-                    continue  # Pomijaj podzbiory bez nowych elementów
+                    continue  # Skip subsets that don't add new elements
 
-                # Nowa metryka: (nowe elementy) / (koszt + kary za rozmiar)
                 ratio = new_count / (costs[subset] + 0.1 * len(solution_subsets))
                 if ratio > best_value:
                     best_value = ratio
                     best_subset = subset
 
             if best_subset is None:
-                break  # Brak użytecznych podzbiorów
+                break  # No more subsets to add
 
             solution_subsets.append(best_subset)
             covered.update(covers[best_subset])
@@ -56,7 +53,7 @@ class GreedySolutionGenerator:
         return solution
 
     def generate_population(self) -> List[Solution]:
-        """Generuje m rozwiązań, każde startujące od innego subsetu."""
+        """Generates m solutions each starting from a different subset."""
         solutions = []
         start_time = time.time()
         for start_subset in range(self.validator._m):
@@ -69,11 +66,11 @@ class GreedySolutionGenerator:
                 continue
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"Czas generowania populacji: {elapsed_time:.2f} sekund")
+        print(f"Time it took to generate: {elapsed_time:.2f} seconds")
         return solutions
 
     def get_best_solution(self, solutions: List[Solution]) -> Solution:
-        """Zwraca rozwiązanie z najwyższym fitness."""
+        """Returns the best solution from a list of solutions."""
         if not solutions:
-            raise ValueError("Brak poprawnych rozwiązań.")
+            raise ValueError("No valid solutions found.")
         return max(solutions, key=lambda sol: sol.get_fitness())

@@ -17,9 +17,9 @@ gsg = GreedySolutionGenerator(vd)
 population = gsg.generate_population()
 if population:
     best_solution = gsg.get_best_solution(population)
-    print("Subset-y:", sorted(best_solution.subsets))
-    print("Ilosc subsetow:", len(best_solution.subsets))
-    print("Koszt:", best_solution.get_cost_sum())
+    print("Subsets selected:", sorted(best_solution.subsets))
+    print("Amount of subsets:", len(best_solution.subsets))
+    print("Cost:", best_solution.get_cost_sum())
     print("Fitness:", best_solution.get_fitness())
 else:
-    print("Nie znaleziono żadnych poprawnych rozwiązań.")
+    print("No valid solutions found.")
