@@ -82,5 +82,14 @@ class Validator:
         return fitness
 
     def complex_eval(self, solution: Solution) -> None:
+        """Evaluate a solution and set all values in the solution object,
+        This function is a combination of all the above functions.
+
+        Args:
+            solution (Solution): Solution to evaluate
+        """
         # TODO Combine all above
+        self.is_correct(solution)
+        self.sum_costs(solution)
+        self.calculate_fitness(solution)
         pass
