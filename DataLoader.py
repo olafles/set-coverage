@@ -1,4 +1,4 @@
-"""Class for data import from file (Singleton)"""
+"""This file contains class for data import from file (Singleton)"""
 
 import os
 
