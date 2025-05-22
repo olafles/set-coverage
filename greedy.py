@@ -1,3 +1,5 @@
+"""This file contains Greedy Solution Generator class for the Set Cover Problem (SCP) implementation."""
+
 from validator import Validator
 from solution import Solution
 from typing import Set, List
@@ -60,8 +62,6 @@ class GreedySolutionGenerator:
     def generate_population(self) -> List[Solution]:
         """Generates m solutions each starting from a different subset.
 
-        Args:
-            None
         Returns:
             List[Solution]: A list of greedy solutions.
         """

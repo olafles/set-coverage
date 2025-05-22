@@ -1,3 +1,5 @@
+"""This file contains different selection methods for the Evolutionary Algorithm (EA) implementation."""
+
 from solution import Solution
 from typing import List
 import random

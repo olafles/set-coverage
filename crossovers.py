@@ -1,3 +1,5 @@
+"""This file contains crossover methods for the Evolutionary Algorithm (EA) implementation."""
+
 from solution import Solution
 from validator import Validator
 from mutations import Mutations

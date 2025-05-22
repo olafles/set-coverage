@@ -1,3 +1,5 @@
+"""This file contains different mutation methods for the Evolutionary Algorithm (EA) implementation as well as for the Simulated Annealing (SA) algorithm."""
+
 from solution import Solution
 from validator import Validator
 import random

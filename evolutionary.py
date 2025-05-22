@@ -1,3 +1,5 @@
+"""This file contains Evolutionary Algorithm (EA) implementation for the Set Cover Problem (SCP)."""
+
 from typing import List, Tuple
 import random
 from solution import Solution
@@ -96,7 +98,7 @@ class EvolutionaryAlgorithm:
             Tuple of (best_solution, best_fitness_history, avg_fitness_history)
         """
         if draw:
-            graph = EA_Graph()
+            graph = EA_Graph(generations)
         if verbose:
             print("Initializing population...")
         population = PopulationGenerator.generate_initial_population(
@@ -128,10 +130,16 @@ class EvolutionaryAlgorithm:
             new_population = self._create_new_population(population)
             population = new_population
 
+        if draw:
+            input("Press Enter to close the graph window...")
         return self.best_solution, self.best_fitness_history, self.avg_fitness_history
 
     def _evaluate_population(self, population: List[Solution]) -> None:
-        """Evaluate all solutions in the population and update statistics."""
+        """Evaluate all solutions in the population and update statistics.
+
+        Args:
+            population: List of solutions to evaluate
+        """
         fitness_values = []
 
         for solution in population:
@@ -142,7 +150,14 @@ class EvolutionaryAlgorithm:
         self.avg_fitness_history.append(sum(fitness_values) / len(fitness_values))
 
     def _create_new_population(self, population: List[Solution]) -> List[Solution]:
-        """Create a new population using selection, crossover, and mutation."""
+        """Create a new population using selection, crossover, and mutation.
+
+        Args:
+            population: List of current solutions
+
+        Returns:
+            List[Solution]: New population of solutions
+        """
         new_population = []
 
         if self.elitism_count > 0:
@@ -171,7 +186,15 @@ class EvolutionaryAlgorithm:
     def _perform_selection(
         self, population: List[Solution], num_parents: int
     ) -> List[Solution]:
-        """Perform selection based on the chosen method."""
+        """Perform selection based on the chosen method.
+
+        Args:
+            population: List of current solutions
+            num_parents: Number of parents to select
+
+        Returns:
+            List[Solution]: Selected parents
+        """
         if self.selection_method == "tournament":
             return Selection.tournament_selection(
                 population, num_parents, self.tournament_size
@@ -182,7 +205,15 @@ class EvolutionaryAlgorithm:
             raise ValueError(f"Unknown selection method: {self.selection_method}")
 
     def _perform_crossover(self, parent1: Solution, parent2: Solution) -> Solution:
-        """Perform crossover based on the chosen method."""
+        """Perform crossover based on the chosen method.
+
+        Args:
+            parent1: First parent solution
+            parent2: Second parent solution
+
+        Returns:
+            Solution: Child solution created from parents
+        """
         if self.crossover_method == "uniform":
             return Crossovers.uniform_crossover(parent1, parent2, self.validator)
         elif self.crossover_method == "greedy":
@@ -193,7 +224,14 @@ class EvolutionaryAlgorithm:
             raise ValueError(f"Unknown crossover method: {self.crossover_method}")
 
     def _perform_mutation(self, solution: Solution) -> Solution:
-        """Perform mutation based on the chosen method."""
+        """Perform mutation based on the chosen method.
+
+        Args:
+            solution: Solution to mutate
+
+        Returns:
+            Solution: Mutated solution
+        """
         if self.mutation_method == "add":
             return Mutations.add_mutation(solution, self.validator)
         elif self.mutation_method == "remove":
@@ -204,7 +242,11 @@ class EvolutionaryAlgorithm:
             raise ValueError(f"Unknown mutation method: {self.mutation_method}")
 
     def get_statistics(self) -> dict:
-        """Get algorithm statistics."""
+        """Get algorithm statistics.
+
+        Returns:
+            dict: Dictionary with statistics
+        """
         if not self.best_solution:
             return {}
 
@@ -230,7 +272,18 @@ class EvolutionaryAlgorithm:
         mutation_method: str = None,
         selection_method: str = None,
     ) -> None:
-        """Update algorithm parameters."""
+        """Update algorithm parameters.
+
+        Args:
+            population_size: New population size
+            mutation_rate: New mutation rate
+            crossover_rate: New crossover rate
+            tournament_size: New tournament size
+            elitism_count: New elitism count
+            crossover_method: New crossover method
+            mutation_method: New mutation method
+            selection_method: New selection method
+        """
         if population_size is not None:
             self.population_size = population_size
         if mutation_rate is not None:

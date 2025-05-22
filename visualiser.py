@@ -1,4 +1,4 @@
-"""Class for visualisation using matplotlib"""
+"""This file contains visualisation classes for the Evolutionary Algorithm (EA) and Simulated Annealing (SA) implementations."""
 
 import matplotlib.pyplot as plt
 from solution import Solution
@@ -61,7 +61,8 @@ class SA_Graph:
 class EA_Graph:
     """Evolutionary Algorithm real-time-updatable graph"""
 
-    def __init__(self):
+    def __init__(self, generations: int = 200) -> None:
+        self.generations = generations
         plt.ion()
         self.fig, self.ax = plt.subplots()
 
@@ -80,7 +81,7 @@ class EA_Graph:
         self.ax.legend(loc="upper right")
         self.ax.grid(True)
 
-        self.ax.set_xlim(0, 200)
+        self.ax.set_xlim(0, generations)
         self.ax.set_ylim(0, 0.6)
 
     def update_graph(self, solutions: List[Solution]) -> None:

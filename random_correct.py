@@ -1,3 +1,5 @@
+"""This file contains RandomSolutionGenerator class for the Set Cover Problem (SCP) implementation."""
+
 import random
 from DataLoader import DataLoader
 from validator import Validator
@@ -12,8 +14,6 @@ class RandomSolutionGenerator:
     def generate_random_solution(self) -> Solution:
         """Generate a random solution for the Set Cover Problem.
 
-        Args:
-            None
         Returns:
             Solution: A random solution that covers all elements.
         """

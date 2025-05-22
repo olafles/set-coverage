@@ -1,3 +1,5 @@
+"""This file contains Validator class for the Set Cover Problem (SCP) implementation."""
+
 from solution import Solution
 from typing import List
 from DataLoader import DataLoader
