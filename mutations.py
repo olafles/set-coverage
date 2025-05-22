@@ -6,7 +6,15 @@ import random
 class Mutations:
     @staticmethod
     def repair_solution(solution: Solution, validator: Validator) -> Solution:
-        """Add random subsets to the solution until it is valid."""
+        """Add random subsets to the solution until it is valid.
+
+        Args:
+            solution (Solution): Solution to repair.
+            validator (Validator): Validator to check the solution.
+
+        Returns:
+            Solution: A valid solution.
+        """
         temp_solution = Solution(list(solution.subsets))
         validator.complex_eval(temp_solution)
 
@@ -24,7 +32,15 @@ class Mutations:
 
     @staticmethod
     def add_mutation(solution: Solution, validator: Validator) -> Solution:
-        """Adds a random subset to the solution and repairs it if necessary."""
+        """Adds a random subset to the solution and repairs it if necessary.
+
+        Args:
+            solution (Solution): Solution to mutate.
+            validator (Validator): Validator to check the solution.
+
+        Returns:
+            Solution: A mutated solution.
+        """
         current_subsets = set(solution.subsets)
         all_subsets = set(range(validator._m))
         available = list(all_subsets - current_subsets)
@@ -41,7 +57,15 @@ class Mutations:
 
     @staticmethod
     def remove_mutation(solution: Solution, validator: Validator) -> Solution:
-        """Deletes a random subset from the solution and repairs it if necessary."""
+        """Deletes a random subset from the solution and repairs it if necessary.
+
+        Args:
+            solution (Solution): Solution to mutate.
+            validator (Validator): Validator to check the solution.
+
+        Returns:
+            Solution: A mutated solution.
+        """
         if not solution.subsets:
             return Solution(list(solution.subsets))
 
@@ -55,7 +79,15 @@ class Mutations:
 
     @staticmethod
     def swap_mutation(solution: Solution, validator: Validator) -> Solution:
-        """Swaps a random subset in the solution with a random one and repairs it if necessary."""
+        """Swaps a random subset in the solution with a random one and repairs it if necessary.
+
+        Args:
+            solution (Solution): Solution to mutate.
+            validator (Validator): Validator to check the solution.
+
+        Returns:
+            Solution: A mutated solution.
+        """
         if not solution.subsets:
             return Solution(list(solution.subsets))
 

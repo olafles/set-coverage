@@ -8,7 +8,16 @@ class Selection:
     def tournament_selection(
         population: List[Solution], num_parents: int, tournament_size: int = 3
     ) -> List[Solution]:
-        """Selekcja turniejowa - wybiera najlepsze rozwiązania z losowych grup."""
+        """Tournament selection - selects the best solution from a random subset of the population.
+
+        Args:
+            population (List[Solution]): List of solutions to select from.
+            num_parents (int): Number of parents to select.
+            tournament_size (int): Number of participants in each tournament.
+
+        Returns:
+            List[Solution]: Selected parents.
+        """
         selected = []
         for _ in range(num_parents):
             participants = random.sample(population, tournament_size)
@@ -20,7 +29,15 @@ class Selection:
     def roulette_selection(
         population: List[Solution], num_parents: int
     ) -> List[Solution]:
-        """Selekcja ruletkowa - prawdopodobieństwo wyboru proporcjonalne do 1/fitness."""
+        """Roulette selection - selection probability proportional to 1/fitness.
+
+        Args:
+            population (List[Solution]): List of solutions to select from.
+            num_parents (int): Number of parents to select.
+
+        Returns:
+            List[Solution]: Selected parents.
+        """
         fitness_values = [
             1 / (sol.get_fitness() + 1e-6) for sol in population
         ]  # +1e-6 aby uniknąć dzielenia przez 0

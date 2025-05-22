@@ -10,6 +10,13 @@ class RandomSolutionGenerator:
         pass
 
     def generate_random_solution(self) -> Solution:
+        """Generate a random solution for the Set Cover Problem.
+
+        Args:
+            None
+        Returns:
+            Solution: A random solution that covers all elements.
+        """
         all_subsets = list(range(0, self.validator._m))
         random.shuffle(all_subsets)
         solution = Solution(
