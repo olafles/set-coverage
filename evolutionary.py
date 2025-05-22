@@ -124,7 +124,6 @@ class EvolutionaryAlgorithm:
                     f"Generation {generation}: Best fitness = {current_best.get_fitness():.4f}, "
                     f"Avg fitness = {avg_fitness:.4f}, Best cost = {current_best.get_cost_sum()}"
                 )
-            graph.update_graph(population)
 
             new_population = self._create_new_population(population)
             population = new_population
