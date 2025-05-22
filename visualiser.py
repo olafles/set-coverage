@@ -80,8 +80,8 @@ class EA_Graph:
         self.ax.legend(loc="upper right")
         self.ax.grid(True)
 
-        self.ax.set_xlim(0, 1)
-        self.ax.set_ylim(0, 1)
+        self.ax.set_xlim(0, 200)
+        self.ax.set_ylim(0, 0.6)
 
     def update_graph(self, solutions: List[Solution]) -> None:
         """Add another generation to graph

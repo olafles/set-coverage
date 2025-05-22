@@ -6,6 +6,7 @@ from population import PopulationGenerator
 from selections import Selection
 from crossovers import Crossovers
 from mutations import Mutations
+from visualiser import EA_Graph
 
 
 class EvolutionaryAlgorithm:
@@ -82,7 +83,7 @@ class EvolutionaryAlgorithm:
         print(f"  Selection: {self.selection_method}")
 
     def run(
-        self, generations: int, verbose: bool = True
+        self, generations: int, verbose: bool = True, draw: bool = False
     ) -> Tuple[Solution, List[float], List[float]]:
         """
         Run the evolutionary algorithm for specified number of generations.
@@ -94,6 +95,8 @@ class EvolutionaryAlgorithm:
         Returns:
             Tuple of (best_solution, best_fitness_history, avg_fitness_history)
         """
+        if draw:
+            graph = EA_Graph()
         if verbose:
             print("Initializing population...")
         population = PopulationGenerator.generate_initial_population(
@@ -102,6 +105,8 @@ class EvolutionaryAlgorithm:
 
         for generation in range(generations):
             self._evaluate_population(population)
+            if draw:
+                graph.update_graph(population)
 
             current_best = min(population, key=lambda sol: sol.get_fitness())
             if (
