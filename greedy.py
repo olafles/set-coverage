@@ -9,7 +9,14 @@ class GreedySolutionGenerator:
         self.validator = validator
 
     def _generate_greedy_solution(self, start_subset: int = None) -> Solution:
-        """Generates a greedy solution, selecting subsets with the best ratio of new elements to cost."""
+        """Generates a greedy solution, selecting subsets with the best ratio of new elements to cost.
+
+        Args:
+            start_subset (int, optional): Starting subset index. If None, starts with the best available subset.
+
+        Returns:
+            Solution: A greedy solution that covers all elements.
+        """
         n = self.validator._n
         costs = self.validator._costs
         covers = self.validator._covers
@@ -51,7 +58,13 @@ class GreedySolutionGenerator:
         return solution
 
     def generate_population(self) -> List[Solution]:
-        """Generates m solutions each starting from a different subset."""
+        """Generates m solutions each starting from a different subset.
+
+        Args:
+            None
+        Returns:
+            List[Solution]: A list of greedy solutions.
+        """
         solutions = []
         start_time = time.time()
         for start_subset in range(self.validator._m):
@@ -67,7 +80,14 @@ class GreedySolutionGenerator:
         return solutions
 
     def get_best_solution(self, solutions: List[Solution]) -> Solution:
-        """Returns the best solution from a list of solutions."""
+        """Returns the best solution from a list of solutions.
+
+        Args:
+            solutions (List[Solution]): List of solutions to evaluate.
+
+        Returns:
+            Solution: The best solution based on fitness.
+        """
         if not solutions:
             raise ValueError("No valid solutions found.")
         return max(solutions, key=lambda sol: sol.get_fitness())
