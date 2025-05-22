@@ -9,7 +9,7 @@ from typing import List
 class SA_Graph:
     """Simulated Annealing real-time-updatable graph"""
 
-    def __init__(self):
+    def __init__(self, max_temp):
         plt.ion()
         self.fig, self.ax1 = plt.subplots()
         self.ax2 = self.ax1.twinx()
@@ -25,8 +25,8 @@ class SA_Graph:
         self.ax1.set_ylabel("Fitness", color="b")
         self.ax2.set_ylabel("Temperature", color="r")
 
-        self.ax1.set_ylim(0, 1)  # Fitness range (0-1)
-        self.ax2.set_ylim(0, 1000)  # Temperature range (0-1000)
+        self.ax1.set_ylim(0, 0.5)  # Fitness range (0-1)
+        self.ax2.set_ylim(0, max_temp)  # Temperature range (0-1000)
 
         self.ax1.grid(True, alpha=0.3)
         self.ax2.grid(True, alpha=0.3)
