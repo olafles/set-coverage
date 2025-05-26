@@ -91,13 +91,25 @@ class DataLoader:
         """Return cost of each subset"""
         return self._costs
 
+    def calculate_density(self) -> float:
+        """Calculate the density of the instance"""
+        subset_covers = self.get_subset_covers()
+        total_elements_covered = sum(len(covers) for covers in subset_covers)
+        density = (
+            total_elements_covered / (self.get_m() * self.get_n()) * 100
+            if self.get_m() > 0 and self.get_n() > 0
+            else 0.0
+        )
+        return density
+
 
 if __name__ == "__main__":
     # Testing
-    dl = DataLoader("scp_toy.txt")
+    dl = DataLoader("scp41.txt")
     dl.fetch_data()
     print(f"Loaded {dl.get_n()} elements and {dl.get_m()} subsets.")
     print(f"Costs: {dl.get_costs()}")
     print(f"Costs len: {len(dl.get_costs())}")
     print(f"Element covers sample: {dl.get_element_covers()}")
     print(f"Subset covers sample: {dl.get_subset_covers()}")
+    print(f"Density: {dl.calculate_density():.2f}%")
