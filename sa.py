@@ -43,12 +43,12 @@ class SimulatedAnnealing:
             current_solution = self.rsa.generate_random_solution()
 
         self.validator.complex_eval(current_solution)
-        best_solution = Solution(list(current_solution.subsets))
-        self.validator.complex_eval(best_solution)
+        best_solution = current_solution
 
         temperature = initial_temp
+        iteration = 0
 
-        for iteration in range(max_iterations):
+        while iteration < max_iterations and temperature < final_temp:
             mutation_choice = random.choice(["swap", "add", "remove", "local_search"])
 
             if mutation_choice == "swap":
@@ -81,9 +81,8 @@ class SimulatedAnnealing:
             temperature = self._cool_temperature(
                 initial_temp, final_temp, iteration, max_iterations, cooling_schedule
             )
+            iteration += 1
 
-            if temperature < final_temp:
-                break
         if draw:
             input("Press enter to close and continue")
 
