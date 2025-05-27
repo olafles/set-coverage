@@ -4,7 +4,8 @@ from DataLoader import DataLoader
 from validator import Validator
 from random_correct import RandomSolutionGenerator
 
-# Testing
+# Testing Random Solution Generator
+print("=== Random Solution Generator Test ===")
 dl = DataLoader("scp41.txt")
 dl.fetch_data()
 vd = Validator(dl)

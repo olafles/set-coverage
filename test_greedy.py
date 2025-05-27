@@ -5,11 +5,11 @@ from validator import Validator
 from greedy import GreedySolutionGenerator
 import time
 
-# Testing
+# Testing Greedy Solution Generator
+print("=== Greedy Solution Generator Test ===")
 dl = DataLoader("scp41.txt")
 dl.fetch_data()
 vd = Validator(dl)
-print("Greedy solution test:")
 start_greedy = time.time()
 gsg = GreedySolutionGenerator(vd)
 population = gsg.generate_population()

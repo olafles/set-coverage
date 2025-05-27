@@ -11,7 +11,7 @@ dl.fetch_data()
 vd = Validator(dl)
 
 # Example 1: Testing the Evolutionary Algorithm
-print("=== Basic EA with User-Defined Methods ===")
+print("=== Evolutionary Algorithm Test ===")
 ea = EvolutionaryAlgorithm(
     validator=vd,
     population_size=100,
