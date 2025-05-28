@@ -112,3 +112,35 @@ class EA_Graph:
 
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
+
+
+def plot_histories(best_hist, avg_hist, worst_hist):
+    """
+    Plots three performance histories (best, average, worst) using matplotlib.
+
+    Parameters:
+    best_hist (list): List of best performance values (floats)
+    avg_hist (list): List of average performance values (floats)
+    worst_hist (list): List of worst performance values (floats)
+    """
+    # Create x-axis values (0 to n-1)
+    x = list(range(len(best_hist)))
+
+    # Create figure and axis
+    plt.figure(figsize=(10, 6))
+
+    # Plot all three histories
+    plt.plot(x, best_hist, "b-", label="Best", linewidth=2)
+    plt.plot(x, avg_hist, "g-", label="Average", linewidth=2)
+    plt.plot(x, worst_hist, "r-", label="Worst", linewidth=2)
+
+    # Add labels and title
+    plt.xlabel("Generation")
+    plt.ylabel("Fitness Value")
+    plt.title("Fitnes over generations graph")
+    plt.grid(True, linestyle="--", alpha=0.7)
+    plt.legend()
+
+    # Show the plot
+    plt.tight_layout()
+    plt.show()
