@@ -40,9 +40,7 @@ class Selection:
         Returns:
             List[Solution]: Selected parents.
         """
-        fitness_values = [
-            1 / (sol.get_fitness() + 1e-6) for sol in population
-        ]  # +1e-6 aby uniknąć dzielenia przez 0
+        fitness_values = [(1 / (sol.get_fitness())) for sol in population]
         total = sum(fitness_values)
         probabilities = [f / total for f in fitness_values]
 

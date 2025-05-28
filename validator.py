@@ -188,7 +188,7 @@ class Validator:
 
         # Check if solution is valid (covers all elements)
         if not self.is_correct(solution):
-            return float("inf")
+            return float(999999)
 
         # Calculate total cost and penalties for VALID solutions
         total_cost = sum(self._costs[j] for j in solution.subsets)
@@ -200,5 +200,5 @@ class Validator:
                 overlap = len(set(subset_i) & set(subset_j))
                 if overlap > conflict_threshold_k:
                     total_cost += self._gamma * (overlap - conflict_threshold_k)
-
+        solution._fitness = total_cost
         return total_cost
