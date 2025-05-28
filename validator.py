@@ -3,6 +3,7 @@
 from solution import Solution
 from typing import List
 from DataLoader import DataLoader
+import math
 
 
 class Validator:
@@ -20,6 +21,18 @@ class Validator:
         self._costs = dl.get_costs()
         self._covers = dl.get_subset_covers()
         self._all_elements = set(range(self._n))
+
+        # Calculate gamma for instance
+        max_cost_per_element = 0
+        for j in range(len(self._covers)):
+            subset_size = len(self._covers[j])
+            if subset_size == 0:
+                continue  # Avoid division by zero (invalid subset)
+            cost_per_element = self._costs[j] / subset_size
+            if cost_per_element > max_cost_per_element:
+                max_cost_per_element = cost_per_element
+
+        self._gamma = max(math.ceil(max_cost_per_element), 1)  # Gamma ≥ 1
         pass
 
     def calculate_covered_elements(self, solution: Solution) -> list[int]:
@@ -70,7 +83,7 @@ class Validator:
         solution._cost_sum = sum_of_costs
         return sum_of_costs
 
-    def calculate_fitness(self, solution: Solution) -> float:
+    def calculate_fitness_old(self, solution: Solution) -> float:
         """Calculate solutions fitness based on covered elements and cost
 
         Args:
@@ -156,3 +169,36 @@ class Validator:
         if removed_any:
             self.complex_eval(solution)  # Update solution metrics
         return removed_any
+
+    def calculate_fitness(
+        self,
+        solution: Solution,
+        conflict_threshold_k: int = 1,
+    ):
+        """
+        Calculate solution cost based on conflict graph
+
+        Args:
+            solution (list): Indices of selected subsets (e.g., [5, 3, 0, 1]).
+            conflict_threshold_k (int): Maximum allowed overlap without penalty.
+
+        Returns:
+            Total cost (float): Sum of subset costs + conflict penalties.
+        """
+
+        # Check if solution is valid (covers all elements)
+        if not self.is_correct(solution):
+            return float("inf")
+
+        # Calculate total cost and penalties for VALID solutions
+        total_cost = sum(self._costs[j] for j in solution.subsets)
+
+        for i in range(len(solution.subsets)):
+            subset_i = self._covers[solution.subsets[i]]
+            for j in range(i + 1, len(solution.subsets)):
+                subset_j = self._covers[solution.subsets[j]]
+                overlap = len(set(subset_i) & set(subset_j))
+                if overlap > conflict_threshold_k:
+                    total_cost += self._gamma * (overlap - conflict_threshold_k)
+
+        return total_cost
