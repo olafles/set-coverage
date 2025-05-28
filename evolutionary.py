@@ -8,7 +8,7 @@ from population import PopulationGenerator
 from selections import Selection
 from crossovers import Crossovers
 from mutations import Mutations
-from visualiser import EA_Graph
+from visualiser import plot_histories
 
 
 class EvolutionaryAlgorithm:
@@ -98,7 +98,9 @@ class EvolutionaryAlgorithm:
             Tuple of (best_solution, best_fitness_history, avg_fitness_history)
         """
         if draw:
-            graph = EA_Graph(generations)
+            best_history = []
+            avg_history = []
+            worst_history = []
         if verbose:
             print("Initializing population...")
         population = PopulationGenerator.generate_initial_population(
@@ -107,10 +109,14 @@ class EvolutionaryAlgorithm:
 
         for generation in range(generations):
             self._evaluate_population(population)
-            if draw:
-                graph.update_graph(population)
 
             current_best = min(population, key=lambda sol: sol.get_fitness())
+            current_worst = max(population, key=lambda sol: sol.get_fitness())
+            avg_fitness = sum(sol.get_fitness() for sol in population) / len(population)
+            if draw:
+                best_history.append(current_best.get_fitness())
+                worst_history.append(current_worst.get_fitness())
+                avg_history.append(avg_fitness)
             if (
                 self.best_solution is None
                 or current_best.get_fitness() < self.best_solution.get_fitness()
@@ -119,9 +125,6 @@ class EvolutionaryAlgorithm:
                 self.validator.complex_eval(self.best_solution)
 
             if verbose and (generation % 10 == 0 or generation == generations - 1):
-                avg_fitness = sum(sol.get_fitness() for sol in population) / len(
-                    population
-                )
                 print(
                     f"Generation {generation}: Best fitness = {current_best.get_fitness():.4f}, "
                     f"Avg fitness = {avg_fitness:.4f}, Best cost = {current_best.get_cost_sum()}"
@@ -131,6 +134,7 @@ class EvolutionaryAlgorithm:
             population = new_population
 
         if draw:
+            plot_histories(best_history, avg_history, worst_history)
             input("Press Enter to close the graph window...")
         return self.best_solution, self.best_fitness_history, self.avg_fitness_history
 
