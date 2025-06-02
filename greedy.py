@@ -43,7 +43,7 @@ class GreedySolutionGenerator:
                 if new_count == 0:
                     continue  # Skip subsets that don't add new elements
 
-                ratio = new_count / (costs[subset] + 0.1 * len(solution_subsets))
+                ratio = new_count / (costs[subset])  # + 0.1 * len(solution_subsets))
                 if ratio > best_value:
                     best_value = ratio
                     best_subset = subset
@@ -57,6 +57,8 @@ class GreedySolutionGenerator:
 
         solution = Solution(solution_subsets)
         self.validator.complex_eval(solution)
+        self.validator.remove_redundant_subsets(solution, continuous=True)
+        self.validator.complex_eval(solution)
         return solution
 
     def generate_population(self) -> List[Solution]:
@@ -68,6 +70,9 @@ class GreedySolutionGenerator:
         solutions = []
         start_time = time.time()
         for start_subset in range(self.validator._m):
+            print(
+                f"Generating solution starting with subset {start_subset + 1}/{self.validator._m}"
+            )
             try:
                 solution = self._generate_greedy_solution(start_subset)
                 if solution.is_correct():

@@ -32,7 +32,7 @@ class Validator:
             if cost_per_element > max_cost_per_element:
                 max_cost_per_element = cost_per_element
 
-        self._gamma = max(math.ceil(max_cost_per_element), 1)  # Gamma ≥ 1
+        self._gamma = 10  # max(math.ceil(max_cost_per_element), 1)  # Gamma ≥ 1
         pass
 
     def calculate_covered_elements(self, solution: Solution) -> list[int]:

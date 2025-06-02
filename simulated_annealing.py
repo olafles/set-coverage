@@ -69,7 +69,7 @@ class SimulatedAnnealing:
 
             if debug:
                 print(
-                    f"Iter: {iteration}, Temp: {temperature:.6f}, Current fitness: {current.get_fitness():.6f}, Best fitness: {best.get_fitness():.6f}"
+                    f"Iter: {iteration}, Temp: {temperature:.6f}, Current fitness: {current.get_fitness():.6f}, Best fitness: {best.get_fitness():.6f}, Best cost: {best.get_cost_sum()}"
                 )
 
             temperature = self._update_temperature(

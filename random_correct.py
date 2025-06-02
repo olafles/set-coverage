@@ -28,6 +28,8 @@ class RandomSolutionGenerator:
             )
             self.validator.is_correct(solution)
         self.validator.complex_eval(solution)
+        self.validator.remove_redundant_subsets(solution, continuous=True)
+        self.validator.complex_eval(solution)
         return solution
 
 

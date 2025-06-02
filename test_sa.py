@@ -19,7 +19,7 @@ test_sa = sa.run(
     cooling_rate=0.9995,
     cooling_strategy="exponential",  # "linear", "exponential", "logarithmic"
     max_iterations=100000,
-    debug=False,
+    debug=True,
     draw=True,
 )
 end_time = time.time()
