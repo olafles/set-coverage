@@ -57,7 +57,7 @@ class GreedySolutionGenerator:
 
         solution = Solution(solution_subsets)
         self.validator.complex_eval(solution)
-        self.validator.remove_redundant_subsets(solution, continuous=True)
+        self.validator.remove_redundant_subsets_for_greedy(solution, continuous=True)
         self.validator.complex_eval(solution)
         return solution
 

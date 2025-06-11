@@ -107,6 +107,16 @@ class Validator:
         solution._fitness = fitness
         return fitness
 
+    def complex_eval_without_fitness(self, solution: Solution) -> None:
+        """Check if solution is correct and calculate the cost
+
+        Args:
+            solution (Solution): Solution to evaluate
+        """
+        self.is_correct(solution)
+        self.sum_costs(solution)
+        pass
+
     def complex_eval(self, solution: Solution) -> None:
         """Evaluate a solution and set all values in the solution object,
         This function is a combination of all the above functions.
@@ -132,8 +142,8 @@ class Validator:
         Returns:
             bool: True if any redundant subset was found and removed, False otherwise
         """
-        if not solution.subsets:
-            return False
+        # if not solution.subsets:          # This might make no sense
+        #     return False
 
         # Get current covered elements
         current_covered = set(self.calculate_covered_elements(solution))
@@ -167,7 +177,58 @@ class Validator:
                     break
 
         if removed_any:
-            self.complex_eval(solution)  # Update solution metrics
+            self.complex_eval_without_fitness(solution)
+        return removed_any
+
+    def remove_redundant_subsets_for_greedy(
+        self, solution: Solution, reverse: bool = False, continuous: bool = False
+    ) -> bool:
+        """Remove redundant subsets from the solution while maintaining full coverage.
+
+        Args:
+            solution (Solution): Solution to optimize
+            reverse (bool): If True, checks subsets from back to front. Default False.
+            continuous (bool): If True, checks all subsets and removes all redundant ones. Default False.
+
+        Returns:
+            bool: True if any redundant subset was found and removed, False otherwise
+        """
+        # if not solution.subsets:          # This might make no sense
+        #     return False
+
+        # Get current covered elements
+        current_covered = set(self.calculate_covered_elements(solution))
+        removed_any = False
+        subset_indices = range(len(solution.subsets))
+
+        # Reverse the order if needed
+        if reverse:
+            subset_indices = reversed(subset_indices)
+
+        # Create a copy of indices to avoid modifying while iterating
+        indices_to_check = list(subset_indices)
+
+        for i in indices_to_check:
+            # Skip if this subset was already removed in continuous mode
+            if i >= len(solution.subsets):
+                continue
+
+            # Calculate coverage without this subset
+            temp_subsets = solution.subsets[:i] + solution.subsets[i + 1 :]
+            temp_solution = Solution(temp_subsets)
+            temp_covered = set(self.calculate_covered_elements(temp_solution))
+
+            # If coverage is still complete, remove the subset
+            if temp_covered == current_covered:
+                solution.subsets.pop(i)
+                removed_any = True
+
+                # If not in continuous mode, return after first removal
+                if not continuous:
+                    break
+
+        if removed_any:
+            self.complex_eval(solution)
         return removed_any
 
     def calculate_fitness(
@@ -188,7 +249,9 @@ class Validator:
 
         # Check if solution is valid (covers all elements)
         if not self.is_correct(solution):
+            # print("Incorrect solution had its fitness calculated...")
             return float(999999)
+        # print("Correct solution had its fitness calculated...")
 
         # Calculate total cost and penalties for VALID solutions
         total_cost = sum(self._costs[j] for j in solution.subsets)

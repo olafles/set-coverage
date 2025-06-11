@@ -27,9 +27,8 @@ class RandomSolutionGenerator:
                 all_subsets.pop(all_subsets.index(random.choice(all_subsets)))
             )
             self.validator.is_correct(solution)
-        self.validator.complex_eval(solution)
-        self.validator.remove_redundant_subsets(solution, continuous=True)
-        self.validator.complex_eval(solution)
+        self.validator.complex_eval_without_fitness(solution)
+        self.validator.remove_redundant_subsets_for_greedy(solution, continuous=True)
         return solution
 
 
