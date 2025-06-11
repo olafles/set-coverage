@@ -50,7 +50,7 @@ class SimulatedAnnealing:
             Solution: The best solution found by the algorithm.
         """
         current = self.rsg.generate_random_solution()
-        self.validator.complex_eval(current)
+        self.validator.complex_eval_without_fitness(current)
         best = Solution(current.subsets.copy())
 
         temperature = initial_temp
@@ -59,17 +59,17 @@ class SimulatedAnnealing:
         while temperature > min_temp and iteration < max_iterations:
             neighbor = self._generate_neighbor(current)
 
-            delta = neighbor.get_fitness() - current.get_fitness()
+            delta = neighbor.get_cost_sum() - current.get_cost_sum()
 
             if self._accept_solution(delta, temperature, neighbor):
                 current = neighbor
-                if current.get_fitness() < best.get_fitness():
+                if current.get_cost_sum() < best.get_cost_sum():
                     best = Solution(current.subsets.copy())
-                    self.validator.complex_eval(best)
+                    self.validator.complex_eval_without_fitness(best)
 
             if debug:
                 print(
-                    f"Iter: {iteration}, Temp: {temperature:.6f}, Current fitness: {current.get_fitness():.6f}, Best fitness: {best.get_fitness():.6f}, Best cost: {best.get_cost_sum()}"
+                    f"Iter: {iteration}, Temp: {temperature:.6f}, Current fitness: {current.get_cost_sum():.6f}, Best fitness: {best.get_cost_sum():.6f}, Best cost: {best.get_cost_sum()}"
                 )
 
             temperature = self._update_temperature(
@@ -134,7 +134,7 @@ class SimulatedAnnealing:
             neighbor = Mutations.swap_mutation(solution, self.validator)
         else:
             neighbor = Solution(solution.subsets.copy())
-            self.validator.remove_redundant_subsets(neighbor, continuous=True)
+            self.validator.remove_redundant_subsets_for_greedy(neighbor, continuous=True)
 
         if not neighbor.is_correct():
             neighbor = Mutations.repair_solution(neighbor, self.validator)
@@ -151,7 +151,7 @@ class SimulatedAnnealing:
         Returns:
             bool: True if the neighbor solution should be accepted, False otherwise.
         """
-        if neighbor.get_fitness() == float("inf"):
+        if neighbor.get_cost_sum() == float("inf"):
             return False
         if delta < 0:
             return True
@@ -170,8 +170,8 @@ class SimulatedAnnealing:
         """
         self.history["iterations"].append(iteration)
         self.history["temperatures"].append(temp)
-        self.history["current_costs"].append(current.get_fitness())
-        self.history["best_costs"].append(best.get_fitness())
+        self.history["current_costs"].append(current.get_cost_sum())
+        self.history["best_costs"].append(best.get_cost_sum())
 
     def _plot_progress(self):
         """Plot the progress of the algorithm showing cost evolution and temperature on one chart."""
@@ -239,5 +239,5 @@ if __name__ == "__main__":
 
     print(f"Best solution: {sorted(test_sa.subsets)}")
     print(f"\nNajlepsze rozwiązanie: {len(test_sa.subsets)} podzbiorów")
-    print(f"Najlepszy fitness: {test_sa.get_fitness():.6f}")
+    print(f"Najlepszy fitness: {test_sa.get_cost_sum():.6f}")
     print(f"Pokrycie: {'OK' if test_sa.is_correct() else 'Niekompletne'}")

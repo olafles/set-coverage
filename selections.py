@@ -23,7 +23,7 @@ class Selection:
         selected = []
         for _ in range(num_parents):
             participants = random.sample(population, tournament_size)
-            best = min(participants, key=lambda sol: sol.get_fitness())
+            best = min(participants, key=lambda sol: sol.get_cost_sum())
             selected.append(best)
         return selected
 
@@ -40,7 +40,7 @@ class Selection:
         Returns:
             List[Solution]: Selected parents.
         """
-        fitness_values = [(1 / (sol.get_fitness())) for sol in population]
+        fitness_values = [(1 / (sol.get_cost_sum())) for sol in population]
         total = sum(fitness_values)
         probabilities = [f / total for f in fitness_values]
 

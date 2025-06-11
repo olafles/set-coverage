@@ -2,14 +2,13 @@ from typing import List
 
 
 class Solution:
-    subsets = []
-    _is_correct = False
-    _cost_sum = 0
-    _fitness = float("inf")  # Albo inf zależy od podejscia
-    _covered_elements = []
 
     def __init__(self, input_subsets: List[int]) -> None:
         self.subsets = input_subsets
+        self._is_correct = False
+        self._cost_sum = 0
+        self._fitness = float("inf")  # Albo inf zależy od podejscia
+        self._covered_elements = []
 
     def get_cost_sum(self) -> int:
         return self._cost_sum

@@ -18,7 +18,7 @@ class Mutations:
             Solution: A valid solution.
         """
         temp_solution = Solution(list(solution.subsets))
-        validator.complex_eval(temp_solution)
+        validator.complex_eval_without_fitness(temp_solution)
 
         current_subsets = set(temp_solution.subsets)
         all_subsets = set(range(validator._m))
@@ -28,7 +28,7 @@ class Mutations:
             subset_to_add = random.choice(available)
             temp_solution.subsets.append(subset_to_add)
             available.remove(subset_to_add)
-            validator.complex_eval(temp_solution)
+            validator.complex_eval_without_fitness(temp_solution)
 
         return temp_solution
 

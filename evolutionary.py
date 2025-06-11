@@ -79,7 +79,7 @@ class EvolutionaryAlgorithm:
                 f"Valid options: {valid_selections}"
             )
 
-        print(f"EA Configuration:")
+        print("EA Configuration:")
         print(f"  Crossover: {self.crossover_method}")
         print(f"  Mutation: {self.mutation_method}")
         print(f"  Selection: {self.selection_method}")
@@ -110,23 +110,25 @@ class EvolutionaryAlgorithm:
         for generation in range(generations):
             self._evaluate_population(population)
 
-            current_best = min(population, key=lambda sol: sol.get_fitness())
-            current_worst = max(population, key=lambda sol: sol.get_fitness())
-            avg_fitness = sum(sol.get_fitness() for sol in population) / len(population)
+            current_best = min(population, key=lambda sol: sol.get_cost_sum())
+            current_worst = max(population, key=lambda sol: sol.get_cost_sum())
+            avg_fitness = sum(sol.get_cost_sum() for sol in population) / len(
+                population
+            )
             if draw:
-                best_history.append(current_best.get_fitness())
-                worst_history.append(current_worst.get_fitness())
+                best_history.append(current_best.get_cost_sum())
+                worst_history.append(current_worst.get_cost_sum())
                 avg_history.append(avg_fitness)
             if (
                 self.best_solution is None
-                or current_best.get_fitness() < self.best_solution.get_fitness()
+                or current_best.get_cost_sum() < self.best_solution.get_cost_sum()
             ):
                 self.best_solution = Solution(list(current_best.subsets))
-                self.validator.complex_eval(self.best_solution)
+                self.validator.complex_eval_without_fitness(self.best_solution)
 
             if verbose and (generation % 10 == 0 or generation == generations - 1):
                 print(
-                    f"Generation {generation}: Best fitness = {current_best.get_fitness():.4f}, "
+                    f"Generation {generation}: Best fitness = {current_best.get_cost_sum():.4f}, "
                     f"Avg fitness = {avg_fitness:.4f}, Best cost = {current_best.get_cost_sum()}"
                 )
 
@@ -147,8 +149,8 @@ class EvolutionaryAlgorithm:
         fitness_values = []
 
         for solution in population:
-            self.validator.complex_eval(solution)
-            fitness_values.append(solution.get_fitness())
+            self.validator.complex_eval_without_fitness(solution)
+            fitness_values.append(solution.get_cost_sum())
 
         self.best_fitness_history.append(min(fitness_values))
         self.avg_fitness_history.append(sum(fitness_values) / len(fitness_values))
@@ -165,7 +167,7 @@ class EvolutionaryAlgorithm:
         new_population = []
 
         if self.elitism_count > 0:
-            elite = sorted(population, key=lambda sol: sol.get_fitness())[
+            elite = sorted(population, key=lambda sol: sol.get_cost_sum())[
                 : self.elitism_count
             ]
             new_population.extend([Solution(list(sol.subsets)) for sol in elite])
@@ -182,7 +184,7 @@ class EvolutionaryAlgorithm:
             if random.random() < self.mutation_rate:
                 child = self._perform_mutation(child)
 
-            self.validator.complex_eval(child)
+            self.validator.complex_eval_without_fitness(child)
             new_population.append(child)
 
         return new_population[: self.population_size]
@@ -255,7 +257,7 @@ class EvolutionaryAlgorithm:
             return {}
 
         return {
-            "best_fitness": self.best_solution.get_fitness(),
+            "best_fitness": self.best_solution.get_cost_sum(),
             "best_cost": self.best_solution.get_cost_sum(),
             "best_subsets": sorted(self.best_solution.subsets),
             "num_subsets": len(self.best_solution.subsets),
@@ -342,7 +344,7 @@ class EvolutionaryAlgorithmComparison:
                 best_solution, _, _ = ea.run(generations, verbose=False)
                 run_results.append(
                     {
-                        "fitness": best_solution.get_fitness(),
+                        "fitness": best_solution.get_cost_sum(),
                         "cost": best_solution.get_cost_sum(),
                         "subsets_count": len(best_solution.subsets),
                     }
@@ -411,7 +413,7 @@ class EvolutionaryAlgorithmComparison:
                         best_solution, _, _ = ea.run(generations, verbose=False)
                         run_results.append(
                             {
-                                "fitness": best_solution.get_fitness(),
+                                "fitness": best_solution.get_cost_sum(),
                                 "cost": best_solution.get_cost_sum(),
                                 "subsets_count": len(best_solution.subsets),
                             }
