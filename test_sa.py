@@ -14,11 +14,11 @@ sa = SimulatedAnnealing(vd)
 start_time = time.time()
 
 test_sa = sa.run(
-    initial_temp=2000.0,
-    min_temp=0.000001,
-    cooling_rate=0.9995,
-    cooling_strategy="exponential",  # "linear", "exponential", "logarithmic"
-    max_iterations=100000,
+    initial_temp=10000.0,
+    min_temp=0.01,
+    cooling_rate=0.9999,
+    cooling_strategy="logarithmic",  # "linear", "exponential", "logarithmic"
+    max_iterations=150000,
     debug=True,
     draw=True,
 )

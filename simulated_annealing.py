@@ -25,8 +25,8 @@ class SimulatedAnnealing:
     def run(
         self,
         initial_temp: float = 1000.0,
-        min_temp: float = 0.000001,
-        cooling_rate: float = 0.99,
+        min_temp: float = 0.01,
+        cooling_rate: float = 0.95,
         cooling_strategy: Literal[
             "exponential", "linear", "logarithmic"
         ] = "exponential",
@@ -49,9 +49,15 @@ class SimulatedAnnealing:
         Returns:
             Solution: The best solution found by the algorithm.
         """
-        current = self.rsg.generate_random_solution()
+        for _ in range(5):  # Generuj 5 rozwiązań początkowych
+            candidate = self.rsg.generate_random_solution()
+            self.validator.complex_eval_without_fitness(candidate)
+            if candidate.get_cost_sum() < best_initial_cost:
+                best_initial = candidate
+                best_initial_cost = candidate.get_cost_sum()
+        current = best_initial
         self.validator.complex_eval_without_fitness(current)
-        best = Solution(current.subsets.copy())
+        best = current
 
         temperature = initial_temp
         iteration = 0
@@ -64,12 +70,12 @@ class SimulatedAnnealing:
             if self._accept_solution(delta, temperature, neighbor):
                 current = neighbor
                 if current.get_cost_sum() < best.get_cost_sum():
-                    best = Solution(current.subsets.copy())
+                    best = current
                     self.validator.complex_eval_without_fitness(best)
 
             if debug:
                 print(
-                    f"Iter: {iteration}, Temp: {temperature:.6f}, Current fitness: {current.get_cost_sum():.6f}, Best fitness: {best.get_cost_sum():.6f}, Best cost: {best.get_cost_sum()}"
+                    f"Iter: {iteration}, Temp: {temperature:.6f}, Current cost: {current.get_cost_sum():.6f}, Best cost: {best.get_cost_sum()}, Log: {math.log(1+iteration)}, Math: {(1 + cooling_rate * math.log(1 + iteration))}"
                 )
 
             temperature = self._update_temperature(
@@ -107,9 +113,10 @@ class SimulatedAnnealing:
         if strategy == "exponential":
             return current_temp * cooling_rate
         elif strategy == "linear":
-            return max(initial_temp - iteration * cooling_rate)
+            return max(0.0, initial_temp - iteration * cooling_rate)
         elif strategy == "logarithmic":
-            return initial_temp / (1 + cooling_rate * math.log(1 + iteration))
+            current_temp *= cooling_rate
+            return current_temp
         else:
             raise ValueError(f"Unknown cooling strategy: {strategy}")
 
@@ -134,7 +141,9 @@ class SimulatedAnnealing:
             neighbor = Mutations.swap_mutation(solution, self.validator)
         else:
             neighbor = Solution(solution.subsets.copy())
-            self.validator.remove_redundant_subsets_for_greedy(neighbor, continuous=True)
+            self.validator.remove_redundant_subsets_for_greedy(
+                neighbor, continuous=True
+            )
 
         if not neighbor.is_correct():
             neighbor = Mutations.repair_solution(neighbor, self.validator)
@@ -209,7 +218,7 @@ class SimulatedAnnealing:
         )
         ax2.set_ylabel("Temperatura", color="red")
         ax2.tick_params(axis="y", labelcolor="red")
-        ax2.set_yscale("log")
+        ax2.set_yscale("linear")
 
         lines = line1 + line2 + line3
         labels = [l.get_label() for l in lines]
