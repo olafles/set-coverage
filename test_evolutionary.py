@@ -14,19 +14,19 @@ vd = Validator(dl)
 print("=== Evolutionary Algorithm Test ===")
 ea = EvolutionaryAlgorithm(
     validator=vd,
-    population_size=100,
-    mutation_rate=0.15,
-    crossover_rate=0.8,
-    tournament_size=3,
-    elitism_count=1,
+    population_size=500,
+    mutation_rate=0.35,
+    crossover_rate=0.0,
+    tournament_size=50,
+    elitism_count=5,
     crossover_method="pmx",  # User chooses: uniform, greedy, pmx
     mutation_method="swap",  # User chooses: add, remove, swap
     selection_method="tournament",  # User chooses: tournament, roulette
 )
 start_time = time.time()
-gen_size = 100
+gen_size = 500
 best_solution, best_history, avg_history = ea.run(
-    generations=gen_size, verbose=True, draw=False
+    generations=gen_size, verbose=True, draw=True
 )
 end_time = time.time()
 print(f"Time it took to generate: {end_time - start_time:.2f} seconds")
