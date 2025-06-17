@@ -130,14 +130,14 @@ def plot_histories(best_hist, avg_hist, worst_hist):
     plt.figure(figsize=(10, 6))
 
     # Plot all three histories
-    plt.plot(x, best_hist, "b-", label="Best", linewidth=2)
-    plt.plot(x, avg_hist, "g-", label="Average", linewidth=2)
-    plt.plot(x, worst_hist, "r-", label="Worst", linewidth=2)
+    plt.plot(x, best_hist, "b-", label="Najlepszy koszt", linewidth=2)
+    plt.plot(x, avg_hist, "g-", label="Średni koszt", linewidth=2)
+    plt.plot(x, worst_hist, "r-", label="Najgorszy koszt", linewidth=2)
 
     # Add labels and title
-    plt.xlabel("Generation")
-    plt.ylabel("Fitness Value")
-    plt.title("Fitnes over generations graph")
+    plt.xlabel("Generacja")
+    plt.ylabel("Koszt")
+    plt.title("Koszt w czasie ewolucji")
     plt.grid(True, linestyle="--", alpha=0.7)
     plt.legend()
 

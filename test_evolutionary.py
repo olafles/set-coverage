@@ -15,12 +15,12 @@ print("=== Evolutionary Algorithm Test ===")
 ea = EvolutionaryAlgorithm(
     validator=vd,
     population_size=500,
-    mutation_rate=0.35,
+    mutation_rate=1.0,  # 0.35 dla swap normalnego
     crossover_rate=0.0,
     tournament_size=50,
     elitism_count=5,
     crossover_method="pmx",  # User chooses: uniform, greedy, pmx
-    mutation_method="swap",  # User chooses: add, remove, swap
+    mutation_method="swap_per_gen",  # User chooses: add, remove, swap
     selection_method="tournament",  # User chooses: tournament, roulette
 )
 start_time = time.time()

@@ -58,7 +58,7 @@ class EvolutionaryAlgorithm:
     def _validate_methods(self) -> None:
         """Validate that the chosen methods are available."""
         valid_crossovers = ["uniform", "greedy", "pmx"]
-        valid_mutations = ["add", "remove", "swap"]
+        valid_mutations = ["add", "remove", "swap", "remove_per_gen", "swap_per_gen"]
         valid_selections = ["tournament", "roulette"]
 
         if self.crossover_method not in valid_crossovers:
@@ -244,6 +244,10 @@ class EvolutionaryAlgorithm:
             return Mutations.remove_mutation(solution, self.validator)
         elif self.mutation_method == "swap":
             return Mutations.swap_mutation(solution, self.validator)
+        elif self.mutation_method == "remove_per_gen":
+            return Mutations.remove_mutation_per_gen(solution, self.validator)
+        elif self.mutation_method == "swap_per_gen":
+            return Mutations.swap_mutation_per_gen(solution, self.validator)
         else:
             raise ValueError(f"Unknown mutation method: {self.mutation_method}")
 
