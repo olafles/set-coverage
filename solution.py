@@ -7,7 +7,7 @@ class Solution:
         self.subsets = input_subsets
         self._is_correct = False
         self._cost_sum = 0
-        self._fitness = float("inf")  # Albo inf zależy od podejscia
+        self._fitness = float("inf")
         self._covered_elements = []
 
     def get_cost_sum(self) -> int:

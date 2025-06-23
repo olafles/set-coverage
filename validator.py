@@ -1,9 +1,7 @@
 """This file contains Validator class for the Set Cover Problem (SCP) implementation."""
 
 from solution import Solution
-from typing import List
 from DataLoader import DataLoader
-import math
 
 
 class Validator:
@@ -22,17 +20,16 @@ class Validator:
         self._covers = dl.get_subset_covers()
         self._all_elements = set(range(self._n))
 
-        # Calculate gamma for instance
         max_cost_per_element = 0
         for j in range(len(self._covers)):
             subset_size = len(self._covers[j])
             if subset_size == 0:
-                continue  # Avoid division by zero (invalid subset)
+                continue
             cost_per_element = self._costs[j] / subset_size
             if cost_per_element > max_cost_per_element:
                 max_cost_per_element = cost_per_element
 
-        self._gamma = 10  # max(math.ceil(max_cost_per_element), 1)  # Gamma ≥ 1
+        self._gamma = 10
         pass
 
     def calculate_covered_elements(self, solution: Solution) -> list[int]:
@@ -45,11 +42,8 @@ class Validator:
             List[int]: List of covered elements
         """
         covered_elements = set()
-        # print(f"{len(self._covers)=}")
         for subset in solution.subsets:
-            # print(subset)
             covered_elements.update(self._covers[subset])
-            # print(covered_elements)
         sorted_covered = sorted(covered_elements)
         solution._covered_elements = sorted_covered
         return sorted_covered
@@ -64,7 +58,6 @@ class Validator:
             bool: True if all elements are covered
         """
         covered = self.calculate_covered_elements(solution)
-        # print(f"{covered=}")
         if set(covered) == self._all_elements:
             solution._is_correct = True
             return True
@@ -142,37 +135,27 @@ class Validator:
         Returns:
             bool: True if any redundant subset was found and removed, False otherwise
         """
-        # if not solution.subsets:          # This might make no sense
-        #     return False
-
-        # Get current covered elements
         current_covered = set(self.calculate_covered_elements(solution))
         removed_any = False
         subset_indices = range(len(solution.subsets))
 
-        # Reverse the order if needed
         if reverse:
             subset_indices = reversed(subset_indices)
 
-        # Create a copy of indices to avoid modifying while iterating
         indices_to_check = list(subset_indices)
 
         for i in indices_to_check:
-            # Skip if this subset was already removed in continuous mode
             if i >= len(solution.subsets):
                 continue
 
-            # Calculate coverage without this subset
             temp_subsets = solution.subsets[:i] + solution.subsets[i + 1 :]
             temp_solution = Solution(temp_subsets)
             temp_covered = set(self.calculate_covered_elements(temp_solution))
 
-            # If coverage is still complete, remove the subset
             if temp_covered == current_covered:
                 solution.subsets.pop(i)
                 removed_any = True
 
-                # If not in continuous mode, return after first removal
                 if not continuous:
                     break
 
@@ -193,37 +176,27 @@ class Validator:
         Returns:
             bool: True if any redundant subset was found and removed, False otherwise
         """
-        # if not solution.subsets:          # This might make no sense
-        #     return False
-
-        # Get current covered elements
         current_covered = set(self.calculate_covered_elements(solution))
         removed_any = False
         subset_indices = range(len(solution.subsets))
 
-        # Reverse the order if needed
         if reverse:
             subset_indices = reversed(subset_indices)
 
-        # Create a copy of indices to avoid modifying while iterating
         indices_to_check = list(subset_indices)
 
         for i in indices_to_check:
-            # Skip if this subset was already removed in continuous mode
             if i >= len(solution.subsets):
                 continue
 
-            # Calculate coverage without this subset
             temp_subsets = solution.subsets[:i] + solution.subsets[i + 1 :]
             temp_solution = Solution(temp_subsets)
             temp_covered = set(self.calculate_covered_elements(temp_solution))
 
-            # If coverage is still complete, remove the subset
             if temp_covered == current_covered:
                 solution.subsets.pop(i)
                 removed_any = True
 
-                # If not in continuous mode, return after first removal
                 if not continuous:
                     break
 
@@ -247,13 +220,9 @@ class Validator:
             Total cost (float): Sum of subset costs + conflict penalties.
         """
 
-        # Check if solution is valid (covers all elements)
         if not self.is_correct(solution):
-            # print("Incorrect solution had its fitness calculated...")
             return float(999999)
-        # print("Correct solution had its fitness calculated...")
 
-        # Calculate total cost and penalties for VALID solutions
         total_cost = sum(self._costs[j] for j in solution.subsets)
 
         for i in range(len(solution.subsets)):

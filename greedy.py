@@ -41,7 +41,7 @@ class GreedySolutionGenerator:
                 new_elements = set(covers[subset]) - covered
                 new_count = len(new_elements)
                 if new_count == 0:
-                    continue  # Skip subsets that don't add new elements
+                    continue
 
                 ratio = new_count / (costs[subset])  # + 0.1 * len(solution_subsets))
                 if ratio > best_value:
@@ -49,7 +49,7 @@ class GreedySolutionGenerator:
                     best_subset = subset
 
             if best_subset is None:
-                break  # No more subsets to add
+                break
 
             solution_subsets.append(best_subset)
             covered.update(covers[best_subset])

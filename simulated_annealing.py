@@ -1,7 +1,6 @@
 """This file contains the Simulated Annealing algorithm implementation for the Set Cover Problem (SCP)."""
 
 from validator import Validator
-from DataLoader import DataLoader
 from solution import Solution
 from mutations import Mutations
 from random_correct import RandomSolutionGenerator
@@ -227,26 +226,3 @@ class SimulatedAnnealing:
         plt.title("Postęp Symulowanego Wyżarzania - Koszt i Temperatura")
         plt.tight_layout()
         plt.show()
-
-
-# Przykład użycia
-if __name__ == "__main__":
-    dl = DataLoader("scp41.txt")
-    dl.fetch_data()
-    vd = Validator(dl)
-
-    sa = SimulatedAnnealing(vd)
-    test_sa = sa.run(
-        initial_temp=2000.0,
-        min_temp=0.000001,
-        cooling_rate=0.9995,
-        max_iterations=100000,
-        cooling_strategy="exponential",
-        debug=True,
-        draw=True,
-    )
-
-    print(f"Best solution: {sorted(test_sa.subsets)}")
-    print(f"\nNajlepsze rozwiązanie: {len(test_sa.subsets)} podzbiorów")
-    print(f"Najlepszy fitness: {test_sa.get_cost_sum():.6f}")
-    print(f"Pokrycie: {'OK' if test_sa.is_correct() else 'Niekompletne'}")

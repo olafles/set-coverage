@@ -5,7 +5,6 @@ from validator import Validator
 from simulated_annealing import SimulatedAnnealing
 import time
 
-# Testing Simulated Annealing
 print("=== Simulated Annealing Test ===")
 dl = DataLoader("scp41.txt")
 dl.fetch_data()
