@@ -48,13 +48,7 @@ class SimulatedAnnealing:
         Returns:
             Solution: The best solution found by the algorithm.
         """
-        for _ in range(5):  # Generuj 5 rozwiązań początkowych
-            candidate = self.rsg.generate_random_solution()
-            self.validator.complex_eval_without_fitness(candidate)
-            if candidate.get_cost_sum() < best_initial_cost:
-                best_initial = candidate
-                best_initial_cost = candidate.get_cost_sum()
-        current = best_initial
+        current = self.rsg.generate_random_solution()
         self.validator.complex_eval_without_fitness(current)
         best = current
 
@@ -75,7 +69,6 @@ class SimulatedAnnealing:
             if debug:
                 print(
                     f"Iter: {iteration}, Temp: {temperature:.6f}, Current cost: {current.get_cost_sum():.6f}, Best cost: {best.get_cost_sum()}"
-
                 )
 
             temperature = self._update_temperature(
