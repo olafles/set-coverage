@@ -58,7 +58,7 @@ class EvolutionaryAlgorithm:
     def _validate_methods(self) -> None:
         """Validate that the chosen methods are available."""
         valid_crossovers = ["uniform", "greedy", "pmx"]
-        valid_mutations = ["add", "remove", "swap"]
+        valid_mutations = ["add", "remove", "swap", "remove_per_gen", "swap_per_gen"]
         valid_selections = ["tournament", "roulette"]
 
         if self.crossover_method not in valid_crossovers:
@@ -222,8 +222,6 @@ class EvolutionaryAlgorithm:
         """
         if self.crossover_method == "uniform":
             return Crossovers.uniform_crossover(parent1, parent2, self.validator)
-        elif self.crossover_method == "greedy":
-            return Crossovers.greedy_crossover(parent1, parent2, self.validator)
         elif self.crossover_method == "pmx":
             return Crossovers.pmx_crossover(parent1, parent2, self.validator)
         else:
@@ -244,6 +242,10 @@ class EvolutionaryAlgorithm:
             return Mutations.remove_mutation(solution, self.validator)
         elif self.mutation_method == "swap":
             return Mutations.swap_mutation(solution, self.validator)
+        elif self.mutation_method == "remove_per_gen":
+            return Mutations.remove_mutation_per_gen(solution, self.validator)
+        elif self.mutation_method == "swap_per_gen":
+            return Mutations.swap_mutation_per_gen(solution, self.validator)
         else:
             raise ValueError(f"Unknown mutation method: {self.mutation_method}")
 
@@ -266,173 +268,3 @@ class EvolutionaryAlgorithm:
             "mutation_method": self.mutation_method,
             "selection_method": self.selection_method,
         }
-
-    def set_parameters(
-        self,
-        population_size: int = None,
-        mutation_rate: float = None,
-        crossover_rate: float = None,
-        tournament_size: int = None,
-        elitism_count: int = None,
-        crossover_method: str = None,
-        mutation_method: str = None,
-        selection_method: str = None,
-    ) -> None:
-        """Update algorithm parameters.
-
-        Args:
-            population_size: New population size
-            mutation_rate: New mutation rate
-            crossover_rate: New crossover rate
-            tournament_size: New tournament size
-            elitism_count: New elitism count
-            crossover_method: New crossover method
-            mutation_method: New mutation method
-            selection_method: New selection method
-        """
-        if population_size is not None:
-            self.population_size = population_size
-        if mutation_rate is not None:
-            self.mutation_rate = mutation_rate
-        if crossover_rate is not None:
-            self.crossover_rate = crossover_rate
-        if tournament_size is not None:
-            self.tournament_size = tournament_size
-        if elitism_count is not None:
-            self.elitism_count = elitism_count
-        if crossover_method is not None:
-            self.crossover_method = crossover_method.lower()
-        if mutation_method is not None:
-            self.mutation_method = mutation_method.lower()
-        if selection_method is not None:
-            self.selection_method = selection_method.lower()
-
-        if any([crossover_method, mutation_method, selection_method]):
-            self._validate_methods()
-
-
-class EvolutionaryAlgorithmComparison:
-    """Utility class for comparing different EA configurations."""
-
-    @staticmethod
-    def compare_configurations(
-        validator: Validator,
-        configurations: List[dict],
-        generations: int = 100,
-        runs_per_config: int = 5,
-    ) -> dict:
-        """
-        Compare different EA configurations.
-
-        Args:
-            validator: Validator instance
-            configurations: List of configuration dictionaries
-            generations: Number of generations per run
-            runs_per_config: Number of runs per configuration
-
-        Returns:
-            Dictionary with comparison results
-        """
-        results = {}
-
-        for i, config in enumerate(configurations):
-            print(f"Testing configuration {i+1}/{len(configurations)}: {config}")
-
-            run_results = []
-            for run in range(runs_per_config):
-                ea = EvolutionaryAlgorithm(validator, **config)
-                best_solution, _, _ = ea.run(generations, verbose=False)
-                run_results.append(
-                    {
-                        "fitness": best_solution.get_cost_sum(),
-                        "cost": best_solution.get_cost_sum(),
-                        "subsets_count": len(best_solution.subsets),
-                    }
-                )
-
-            fitnesses = [r["fitness"] for r in run_results]
-            costs = [r["cost"] for r in run_results]
-
-            results[f"config_{i+1}"] = {
-                "configuration": config,
-                "avg_fitness": sum(fitnesses) / len(fitnesses),
-                "best_fitness": min(fitnesses),
-                "worst_fitness": max(fitnesses),
-                "avg_cost": sum(costs) / len(costs),
-                "best_cost": min(costs),
-                "worst_cost": max(costs),
-                "runs": run_results,
-            }
-
-        return results
-
-    @staticmethod
-    def compare_methods(
-        validator: Validator, generations: int = 100, runs_per_method: int = 3
-    ) -> dict:
-        """
-        Compare different combinations of crossover, mutation, and selection methods.
-
-        Args:
-            validator: Validator instance
-            generations: Number of generations per run
-            runs_per_method: Number of runs per method combination
-
-        Returns:
-            Dictionary with method comparison results
-        """
-        crossover_methods = ["uniform", "greedy", "pmx"]
-        mutation_methods = ["add", "remove", "swap"]
-        selection_methods = ["tournament", "roulette"]
-
-        results = {}
-        total_combinations = (
-            len(crossover_methods) * len(mutation_methods) * len(selection_methods)
-        )
-        current_combination = 0
-
-        for crossover in crossover_methods:
-            for mutation in mutation_methods:
-                for selection in selection_methods:
-                    current_combination += 1
-                    method_name = f"{crossover}_{mutation}_{selection}"
-
-                    print(
-                        f"Testing combination {current_combination}/{total_combinations}: "
-                        f"Crossover={crossover}, Mutation={mutation}, Selection={selection}"
-                    )
-
-                    run_results = []
-                    for run in range(runs_per_method):
-                        ea = EvolutionaryAlgorithm(
-                            validator,
-                            crossover_method=crossover,
-                            mutation_method=mutation,
-                            selection_method=selection,
-                        )
-                        best_solution, _, _ = ea.run(generations, verbose=False)
-                        run_results.append(
-                            {
-                                "fitness": best_solution.get_cost_sum(),
-                                "cost": best_solution.get_cost_sum(),
-                                "subsets_count": len(best_solution.subsets),
-                            }
-                        )
-
-                    fitnesses = [r["fitness"] for r in run_results]
-                    costs = [r["cost"] for r in run_results]
-
-                    results[method_name] = {
-                        "crossover": crossover,
-                        "mutation": mutation,
-                        "selection": selection,
-                        "avg_fitness": sum(fitnesses) / len(fitnesses),
-                        "best_fitness": min(fitnesses),
-                        "worst_fitness": max(fitnesses),
-                        "avg_cost": sum(costs) / len(costs),
-                        "best_cost": min(costs),
-                        "worst_cost": max(costs),
-                        "runs": run_results,
-                    }
-
-        return results

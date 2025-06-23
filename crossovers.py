@@ -34,27 +34,6 @@ class Crossovers:
         return child
 
     @staticmethod
-    def greedy_crossover(
-        parent1: Solution, parent2: Solution, validator: Validator
-    ) -> Solution:
-        """Greedy crossover - combines subsets from both parents and optimizes them.
-
-        Args:
-            parent1 (Solution): First parent solution.
-            parent2 (Solution): Second parent solution.
-            validator (Validator): Validator to check the solution.
-        Returns:
-            Solution: A new solution created from the parents.
-        """
-        combined = list(set(parent1.subsets + parent2.subsets))
-        child = Solution(combined)
-
-        validator.remove_redundant_subsets(child, continuous=True)
-        if not child.is_correct():
-            child = Mutations.repair_solution(child, validator)
-        return child
-
-    @staticmethod
     def pmx_crossover(
         parent1: Solution, parent2: Solution, validator: Validator
     ) -> Solution:

@@ -101,15 +101,3 @@ class DataLoader:
             else 0.0
         )
         return density
-
-
-if __name__ == "__main__":
-    # Testing
-    dl = DataLoader("scp41.txt")
-    dl.fetch_data()
-    print(f"Loaded {dl.get_n()} elements and {dl.get_m()} subsets.")
-    print(f"Costs: {dl.get_costs()}")
-    print(f"Costs len: {len(dl.get_costs())}")
-    print(f"Element covers sample: {dl.get_element_covers()}")
-    print(f"Subset covers sample: {dl.get_subset_covers()}")
-    print(f"Density: {dl.calculate_density():.2f}%")

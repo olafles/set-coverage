@@ -2,7 +2,6 @@
 
 import matplotlib.pyplot as plt
 from solution import Solution
-from time import sleep
 from typing import List
 
 
@@ -25,8 +24,8 @@ class SA_Graph:
         self.ax1.set_ylabel("Fitness", color="b")
         self.ax2.set_ylabel("Temperature", color="r")
 
-        self.ax1.set_ylim(0, 0.5)  # Fitness range (0-1)
-        self.ax2.set_ylim(0, max_temp)  # Temperature range (0-1000)
+        self.ax1.set_ylim(0, 0.5)
+        self.ax2.set_ylim(0, max_temp)
 
         self.ax1.grid(True, alpha=0.3)
         self.ax2.grid(True, alpha=0.3)
@@ -123,24 +122,19 @@ def plot_histories(best_hist, avg_hist, worst_hist):
     avg_hist (list): List of average performance values (floats)
     worst_hist (list): List of worst performance values (floats)
     """
-    # Create x-axis values (0 to n-1)
     x = list(range(len(best_hist)))
 
-    # Create figure and axis
     plt.figure(figsize=(10, 6))
 
-    # Plot all three histories
-    plt.plot(x, best_hist, "b-", label="Best", linewidth=2)
-    plt.plot(x, avg_hist, "g-", label="Average", linewidth=2)
-    plt.plot(x, worst_hist, "r-", label="Worst", linewidth=2)
+    plt.plot(x, best_hist, "b-", label="Najlepszy koszt", linewidth=2)
+    plt.plot(x, avg_hist, "g-", label="Średni koszt", linewidth=2)
+    plt.plot(x, worst_hist, "r-", label="Najgorszy koszt", linewidth=2)
 
-    # Add labels and title
-    plt.xlabel("Generation")
-    plt.ylabel("Fitness Value")
-    plt.title("Fitnes over generations graph")
+    plt.xlabel("Generacja")
+    plt.ylabel("Koszt")
+    plt.title("Koszt w czasie ewolucji")
     plt.grid(True, linestyle="--", alpha=0.7)
     plt.legend()
 
-    # Show the plot
     plt.tight_layout()
     plt.show()

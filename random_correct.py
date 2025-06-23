@@ -30,13 +30,3 @@ class RandomSolutionGenerator:
         self.validator.complex_eval_without_fitness(solution)
         self.validator.remove_redundant_subsets_for_greedy(solution, continuous=True)
         return solution
-
-
-if __name__ == "__main__":
-    dl = DataLoader("scp_toy.txt")
-    dl.fetch_data()
-    validator = Validator(dl)
-    print(dl.get_m())
-    rsg = RandomSolutionGenerator(validator)
-    solution = rsg.generate_random_solution()
-    print(len(solution.subsets))

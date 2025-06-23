@@ -77,6 +77,31 @@ class Mutations:
 
         new_solution = Solution(new_subsets)
         new_solution = Mutations.repair_solution(new_solution, validator)
+        validator.remove_redundant_subsets(new_solution, continuous=True)
+        return new_solution
+
+    @staticmethod
+    def remove_mutation_per_gen(solution: Solution, validator: Validator) -> Solution:
+        """Deletes a random subset from the solution and repairs it if necessary.
+
+        Args:
+            solution (Solution): Solution to mutate.
+            validator (Validator): Validator to check the solution.
+
+        Returns:
+            Solution: A mutated solution.
+        """
+        if not solution.subsets:
+            return Solution(list(solution.subsets))
+
+        new_subsets = list(solution.subsets)
+        for subset in new_subsets:  # Iterate over a copy of the list
+            p = random.random()
+            if p < 0.035:  # Randomly decide to remove a subset
+                new_subsets.remove(subset)
+        new_solution = Solution(new_subsets)
+        new_solution = Mutations.repair_solution(new_solution, validator)
+        validator.remove_redundant_subsets(new_solution, continuous=True)
         return new_solution
 
     @staticmethod
@@ -109,4 +134,40 @@ class Mutations:
 
         new_solution = Solution(new_subsets)
         new_solution = Mutations.repair_solution(new_solution, validator)
+        validator.remove_redundant_subsets(new_solution, continuous=True)
+        return new_solution
+
+    @staticmethod
+    def swap_mutation_per_gen(solution: Solution, validator: Validator) -> Solution:
+        """Swaps a random subset in the solution with a random one and repairs it if necessary.
+
+        Args:
+            solution (Solution): Solution to mutate.
+            validator (Validator): Validator to check the solution.
+
+        Returns:
+            Solution: A mutated solution.
+        """
+        if not solution.subsets:
+            return Solution(list(solution.subsets))
+
+        current_subsets = set(solution.subsets)
+        all_subsets = set(range(validator._m))
+        available = list(all_subsets - current_subsets)
+
+        if not available:
+            return Solution(list(solution.subsets))
+        new_subsets = list(solution.subsets)
+        for subset in new_subsets:
+            p = random.random()
+            if p < 0.035:
+                new_subsets.remove(subset)
+                available.append(subset)
+                subset_to_add = random.choice(available)
+                available.remove(subset_to_add)
+                new_subsets.append(subset_to_add)
+
+        new_solution = Solution(new_subsets)
+        new_solution = Mutations.repair_solution(new_solution, validator)
+        validator.remove_redundant_subsets(new_solution, continuous=True)
         return new_solution

@@ -5,7 +5,6 @@ from validator import Validator
 from greedy import GreedySolutionGenerator
 import time
 
-# Testing Greedy Solution Generator
 print("=== Greedy Solution Generator Test ===")
 dl = DataLoader("scp41.txt")
 dl.fetch_data()

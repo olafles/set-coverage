@@ -5,7 +5,6 @@ from validator import Validator
 from simulated_annealing import SimulatedAnnealing
 import time
 
-# Testing Simulated Annealing
 print("=== Simulated Annealing Test ===")
 dl = DataLoader("scp41.txt")
 dl.fetch_data()
@@ -14,11 +13,11 @@ sa = SimulatedAnnealing(vd)
 start_time = time.time()
 
 test_sa = sa.run(
-    initial_temp=10000.0,
+    initial_temp=5000.0,
     min_temp=0.01,
     cooling_rate=0.9999,
     cooling_strategy="logarithmic",  # "linear", "exponential", "logarithmic"
-    max_iterations=150000,
+    max_iterations=1000000,
     debug=True,
     draw=True,
 )
